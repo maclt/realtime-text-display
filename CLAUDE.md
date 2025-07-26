@@ -2,7 +2,7 @@
 
 ## App Overview
 
-This project is a **voice-to-text system** that captures spoken Mandarin Chinese on an Android device, converts it to Chinese text, and then stores that text as **time-series data** in a Firebase backend. A connected **web dashboard** displays this data in real time.
+This project is a **voice-to-text system** that captures spoken Mandarin Chinese on an Android device, converts it to Chinese text, and then stores that text as **time-series data** in a Firebase backend. A connected **web dashboard** displays this data in real time. The project is **shared with family members** and the Android app is **distributed privately** within the family.
 
 ## Features
 
@@ -24,13 +24,14 @@ This project is a **voice-to-text system** that captures spoken Mandarin Chinese
 * Fetches and displays the Chinese text entries in **chronological order**.
 * Updates instantly when new speech entries are added by the Android app.
 * Allows users to view and monitor speech data in a clean interface.
-* Can be hosted with Firebase Hosting for easy access from any browser.
+* **Runs on localhost** for family access within the local network.
 
 ### Why this app is useful
 
 * Allows you to **capture spoken Mandarin conversations** and see them in written form.
 * Provides a **time-ordered history** of speech entries for review or sharing.
-* The real-time web view is ideal for family members or collaborators to monitor incoming data live.
+* The real-time web view is ideal for **family members** to monitor incoming data live on the local network.
+* **Private family sharing** ensures speech data stays within the household.
 
 ## Environment 
 ### Android App

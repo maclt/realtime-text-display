@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { db } from './firebase';
+import { signInAnonymously } from 'firebase/auth';
+import { db, auth } from './firebase';
 import type { SpeechEntry } from './types/SpeechEntry';
 import {
   ThemeProvider,
@@ -62,31 +63,44 @@ function App() {
   const [speechEntries, setSpeechEntries] = useState<SpeechEntry[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'speechEntries'),
-      orderBy('timestamp', 'desc')
-    );
+    // Authenticate first
+    signInAnonymously(auth)
+      .then(() => {
+        setIsAuthenticated(true);
+        
+        // Then set up Firestore listener
+        const q = query(
+          collection(db, 'speechEntries'),
+          orderBy('timestamp', 'desc')
+        );
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const entries: SpeechEntry[] = [];
-      querySnapshot.forEach((doc) => {
-        entries.push({
-          id: doc.id,
-          ...doc.data()
-        } as SpeechEntry);
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const entries: SpeechEntry[] = [];
+          querySnapshot.forEach((doc) => {
+            entries.push({
+              id: doc.id,
+              ...doc.data()
+            } as SpeechEntry);
+          });
+          setSpeechEntries(entries);
+          setIsConnected(true);
+          setLoading(false);
+        }, (error) => {
+          console.error('Error listening to speech entries:', error);
+          setIsConnected(false);
+          setLoading(false);
+        });
+
+        return () => unsubscribe();
+      })
+      .catch((error) => {
+        console.error('Authentication failed:', error);
+        setIsConnected(false);
+        setLoading(false);
       });
-      setSpeechEntries(entries);
-      setIsConnected(true);
-      setLoading(false);
-    }, (error) => {
-      console.error('Error listening to speech entries:', error);
-      setIsConnected(false);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
   }, []);
 
   const formatTimestamp = (timestamp: { seconds: number; nanoseconds: number }) => {

@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -25,9 +26,11 @@ class MainActivity : AppCompatActivity() {
     private var speechRecognizer: SpeechRecognizer? = null
     private lateinit var recognizerIntent: Intent
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
     
     private var isRecording = false
     private var isInitialized = false
+    private var isAuthenticated = false
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         
         initializeViews()
         initializeFirebase()
+        authenticateUser()
         checkPermissions()
     }
     
@@ -60,6 +64,52 @@ class MainActivity : AppCompatActivity() {
     
     private fun initializeFirebase() {
         firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+    }
+    
+    private fun authenticateUser() {
+        // Check if user is already signed in
+        if (auth.currentUser != null) {
+            isAuthenticated = true
+            statusText.text = "已认证 - ${getString(R.string.app_ready)}"
+        } else {
+            // Sign in anonymously for family use
+            auth.signInAnonymously()
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        isAuthenticated = true
+                        statusText.text = "已认证 - ${getString(R.string.app_ready)}"
+                        
+                        // Register this device as a family device
+                        registerFamilyDevice()
+                    } else {
+                        Toast.makeText(this, "认证失败: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        statusText.text = "认证失败"
+                    }
+                }
+        }
+    }
+    
+    private fun registerFamilyDevice() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val deviceInfo = hashMapOf(
+                "deviceId" to currentUser.uid,
+                "timestamp" to com.google.firebase.Timestamp.now(),
+                "deviceModel" to android.os.Build.MODEL,
+                "approved" to false // You'll need to approve this in Firebase Console
+            )
+            
+            firestore.collection("familyDevices")
+                .document(currentUser.uid)
+                .set(deviceInfo)
+                .addOnSuccessListener {
+                    // Device registered successfully
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "设备注册失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
     
     private fun checkPermissions() {
@@ -162,6 +212,11 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun startListening() {
+        if (!isAuthenticated) {
+            Toast.makeText(this, "请等待认证完成", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
         if (!isRecording && isInitialized) {
             isRecording = true
             startRecordingButton.isEnabled = false
