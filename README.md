@@ -12,6 +12,8 @@ A **voice-to-text system** that captures spoken Mandarin Chinese on Android devi
 - 📲 **Offline recording** with online sync
 - 👨‍👩‍👧‍👦 **Family-friendly APK distribution**
 
+<img src="./assets/android-app.png" width="50%">
+
 ### Web Dashboard
 - 🌐 **Real-time text display** from all family devices
 - 🕒 **Chronological speech history** with timestamps
@@ -19,6 +21,8 @@ A **voice-to-text system** that captures spoken Mandarin Chinese on Android devi
 - 📱 **Responsive design** for desktop and mobile
 - 🔄 **Live updates** without page refresh
 - 🌐 **Localhost deployment** for family network access
+
+![web dashboard](./assets/web-dashboard.png)
 
 ## 🏗️ Architecture
 
@@ -256,6 +260,9 @@ recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ja-JP") // For Japan
 ## 📈 Version History
 
 - **v1.0** - Initial release with basic speech recognition
+
+## 📄 Reference
+[A blog article about this product.](https://maclt.substack.com/p/how-ai-assisted-coding-helped-me)
 
 ---
 
