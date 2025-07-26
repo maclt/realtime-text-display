@@ -36,7 +36,7 @@ A **voice-to-text system** that captures spoken Mandarin Chinese on Android devi
 
 ### Prerequisites
 - **Android Studio** with SDK 21+ (for Android app)
-- **Node.js 18+** (for web dashboard)
+- **Node.js 24+** (for web dashboard)
 - **Firebase project** with Firestore and Authentication enabled
 - **Java 24** (or compatible version)
 
@@ -128,27 +128,6 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
   }
-}
-```
-
-## 📊 Data Structure
-
-### Speech Entries Collection (`speechEntries`)
-```json
-{
-  "text": "你好世界",
-  "timestamp": "2025-01-26T12:34:56Z",
-  "language": "zh-CN"
-}
-```
-
-### Family Devices Collection (`familyDevices`)
-```json
-{
-  "deviceId": "anonymous_user_id",
-  "deviceModel": "Pixel 6a",
-  "timestamp": "2025-01-26T12:34:56Z",
-  "approved": true
 }
 ```
 
@@ -271,17 +250,6 @@ recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ja-JP") // For Japan
 ### Customizing UI
 - **Android**: Modify XML layouts in `res/layout/`
 - **Web**: Update styles in `App.tsx` and theme configuration
-
-## 📄 License
-
-This project is for **private family use**. Not intended for commercial distribution.
-
-## 🤝 Contributing
-
-This is a family project. For issues or improvements:
-1. Test thoroughly on family devices
-2. Ensure security and privacy are maintained
-3. Keep the interface simple for all family members
 
 ---
 
